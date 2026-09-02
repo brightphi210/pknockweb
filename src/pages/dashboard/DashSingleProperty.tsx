@@ -24,7 +24,6 @@ import {
     X,
 } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
 
 // ---------- Data ----------
 
@@ -140,7 +139,7 @@ const relatedProperties: RelatedProperty[] = [
 // ---------- Page ----------
 
 const DashSingleProperty = () => {
-    const { id } = useParams();
+    // const { id } = useParams();
     const [activeImage, setActiveImage] = useState(0);
     const [saved, setSaved] = useState(false);
     const [liked, setLiked] = useState(false);
