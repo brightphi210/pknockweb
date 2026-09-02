@@ -1,32 +1,16 @@
-import {
-    Bell,
-    Bookmark,
-    Eye,
-    LayoutDashboard,
-    Settings,
-    UserCircle2
-} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../providers/AuthProvider";
 import { images } from "../utils/images";
 import { SolidBtn } from "./btns"; // adjust path if needed
 
-const profileLinks = [
-    { label: "Dashboard", icon: LayoutDashboard, to: "/dashboard/home" },
-    { label: "Profile", icon: UserCircle2, to: "/dashboard/profile" },
-    { label: "Saved", icon: Bookmark, to: "/dashboard/saved" },
-    { label: "Watchlist", icon: Eye, to: "/dashboard/watchlist" },
-    { label: "Notifications", icon: Bell, to: "/dashboard/notifications" },
-    { label: "Settings", icon: Settings, to: "/dashboard/settings" },
-];
 
 const Navbar = () => {
-    const { isLoggedIn, user, login, logout } = useAuth();
+    const { isLoggedIn, login } = useAuth();
 
-    // "Get Started" dialog (logged-out state)
     const [dialogOpen, setDialogOpen] = useState(false);
     const dialogRef = useRef<HTMLDivElement>(null);
+    const mobileDialogRef = useRef<HTMLDivElement>(null);
 
     // Profile dropdown (logged-in state)
     const [profileOpen, setProfileOpen] = useState(false);
@@ -35,7 +19,11 @@ const Navbar = () => {
     // Close "Get Started" dialog when clicking outside
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
+            const target = e.target as Node;
+            const insideDesktop = dialogRef.current && dialogRef.current.contains(target);
+            const insideMobile = mobileDialogRef.current && mobileDialogRef.current.contains(target);
+
+            if (!insideDesktop && !insideMobile) {
                 setDialogOpen(false);
             }
         };
@@ -58,7 +46,6 @@ const Navbar = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [profileOpen]);
 
-    // Close either on Escape
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
@@ -70,7 +57,6 @@ const Navbar = () => {
         return () => document.removeEventListener("keydown", handleEscape);
     }, []);
 
-    // Prevent body scroll when the mobile sheet is open
     useEffect(() => {
         document.body.style.overflow = dialogOpen ? "hidden" : "";
         return () => {
@@ -99,7 +85,6 @@ const Navbar = () => {
                         onClick={() => setDialogOpen((prev) => !prev)}
                     />
 
-                    {/* ── Desktop / tablet dropdown ── */}
                     {dialogOpen && (
                         <div className="hidden sm:block absolute right-0 mt-3 w-72 bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden z-50">
                             <div className="p-5 text-center border-b border-gray-100">
@@ -110,18 +95,11 @@ const Navbar = () => {
                             </div>
 
                             <div className="p-3 flex flex-col gap-2 mb-2">
-                                <SolidBtn text="Log in" onClick={handleLogin} />
+                                <SolidBtn text="Continue as User" onClick={handleLogin} />
 
                                 <button
-                                    onClick={() => setDialogOpen(false)}
-                                    className="w-full text-center px-4 py-2.5 bg-emerald-900 text-white rounded-full font-semibold text-xs hover:bg-green-900 transition-all"
-                                >
-                                    Continue as User
-                                </button>
-
-                                <button
-                                    onClick={() => setDialogOpen(false)}
-                                    className="w-full text-center px-4 py-2.5 border border-gray-200 text-gray-700 rounded-full font-semibold text-xs hover:bg-gray-50 hover:border-emerald-200 transition-all"
+                                    onClick={handleLogin}
+                                    className="w-full text-center px-4 py-2.5 bg-neutral-100 border border-neutral-300 cursor-pointer text-gray-700 rounded-lg font-semibold text-xs transition-all"
                                 >
                                     Continue as Landlord
                                 </button>
@@ -134,15 +112,15 @@ const Navbar = () => {
             {/* ── Mobile full-screen / bottom-sheet style dialog (logged-out only) ── */}
             {!isLoggedIn && dialogOpen && (
                 <div className="sm:hidden fixed inset-0 z-50 flex items-end justify-center">
-                    {/* Backdrop */}
                     <div
                         className="absolute inset-0 bg-black/40"
                         onClick={() => setDialogOpen(false)}
                     />
 
-                    {/* Sheet */}
-                    <div className="relative w-full max-w-md bg-white rounded-t-2xl shadow-2xl overflow-hidden animate-slide-up">
-                        {/* Handle bar */}
+                    <div
+                        ref={mobileDialogRef}
+                        className="relative w-full max-w-md bg-white rounded-t-2xl shadow-2xl overflow-hidden animate-slide-up"
+                    >
                         <div className="flex justify-center pt-3 pb-1">
                             <div className="w-10 h-1 rounded-full bg-gray-300" />
                         </div>
@@ -155,18 +133,11 @@ const Navbar = () => {
                         </div>
 
                         <div className="p-4 flex flex-col gap-3 pb-8">
-                            <SolidBtn text="Log in" onClick={handleLogin} />
+                            <SolidBtn text="Continue as User" onClick={handleLogin} />
 
                             <button
-                                onClick={() => setDialogOpen(false)}
-                                className="w-full text-center px-4 py-3.5 bg-emerald-900 text-white rounded-full font-semibold text-sm hover:bg-green-900 transition-all"
-                            >
-                                Continue as User
-                            </button>
-
-                            <button
-                                onClick={() => setDialogOpen(false)}
-                                className="w-full text-center px-4 py-3.5 border border-gray-200 text-gray-700 rounded-full font-semibold text-sm hover:bg-gray-50 hover:border-emerald-200 transition-all"
+                                onClick={handleLogin}
+                                className="w-full text-center px-4 py-3 bg-neutral-100 border border-neutral-300 cursor-pointer text-gray-700 rounded-lg font-semibold text-xs transition-all"
                             >
                                 Continue as Landlord
                             </button>

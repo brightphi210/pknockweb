@@ -1,6 +1,6 @@
 import { ArrowRight, Eye, EyeOff, MapPinHouse } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../../providers/AuthProvider";
 
 const GoogleIcon = () => (
@@ -27,6 +27,12 @@ const GoogleIcon = () => (
 const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
+
+    const { isLoggedIn } = useAuth();
+
+    if (isLoggedIn) {
+        return <Navigate to="/dashboard/home" replace />;
+    }
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -64,7 +70,7 @@ const Login = () => {
 
             {/* ── Right form panel ── */}
             <div className="flex w-full items-center justify-center bg-white px-6 py-16 md:w-1/2">
-                <div className="w-full max-w-sm rounded-2xl border border-gray-200 p-8 shadow-xl shadow-gray-100">
+                <div className="w-full max-w-sm">
                     <h1 className="text-2xl font-bold text-gray-900">Welcome Back!</h1>
                     <p className="mt-2 text-sm text-gray-500">
                         Sign in to continue exploring verified properties and stay

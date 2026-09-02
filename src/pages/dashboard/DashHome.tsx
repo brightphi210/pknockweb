@@ -12,7 +12,8 @@ import {
     Warehouse,
     X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 // ---------- Data ----------
@@ -143,6 +144,43 @@ const DashHome = () => {
     const [availableOnly, setAvailableOnly] = useState(false);
     const [savedIds, setSavedIds] = useState<string[]>([]);
 
+    const filterRef = useRef<HTMLDivElement>(null); // desktop dropdown wrapper
+    const mobileFilterRef = useRef<HTMLDivElement>(null); // mobile sheet content
+
+    // Close filter panel when clicking outside (desktop dropdown OR mobile sheet content)
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            const target = e.target as Node;
+            const insideDesktop = filterRef.current && filterRef.current.contains(target);
+            const insideMobile = mobileFilterRef.current && mobileFilterRef.current.contains(target);
+            if (!insideDesktop && !insideMobile) {
+                setFilterOpen(false);
+            }
+        };
+        if (filterOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [filterOpen]);
+
+    // Escape closes the filter panel
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setFilterOpen(false);
+        };
+        document.addEventListener("keydown", handleEscape);
+        return () => document.removeEventListener("keydown", handleEscape);
+    }, []);
+
+    // Lock body scroll when the mobile sheet is open
+    useEffect(() => {
+        const isMobile = window.matchMedia("(max-width: 639px)").matches;
+        document.body.style.overflow = filterOpen && isMobile ? "hidden" : "";
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [filterOpen]);
+
     const filteredProperties = useMemo(
         () =>
             activeType === "all"
@@ -161,15 +199,133 @@ const DashHome = () => {
         navigate(`/dashboard/property/${id}`);
     };
 
+    const clearFilters = () => {
+        setBedrooms("Any");
+        setSortBy(sortOptions[0]);
+        setVerifiedOnly(false);
+        setAvailableOnly(false);
+    };
+
+    // Shared filter body (used in both desktop dropdown + mobile sheet)
+    const filterBody = (
+        <>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label className="text-xs font-medium text-slate-500">
+                        Property Type
+                    </label>
+                    <select className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-300">
+                        <option>All</option>
+                        {propertyTypes.slice(1).map((t) => (
+                            <option key={t.value}>{t.label}</option>
+                        ))}
+                    </select>
+                </div>
+                <div>
+                    <label className="text-xs font-medium text-slate-500">
+                        City
+                    </label>
+                    <select className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-300">
+                        <option>All Cities</option>
+                        {cities.map((c) => (
+                            <option key={c}>{c}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            <div className="mt-5">
+                <label className="text-xs font-medium text-slate-500">
+                    Bedrooms
+                </label>
+                <div className="mt-1.5 flex flex-wrap gap-2">
+                    {bedroomOptions.map((b) => (
+                        <button
+                            key={b}
+                            onClick={() => setBedrooms(b)}
+                            className={`flex-1 min-w-[52px] rounded-lg px-3 py-2 text-sm font-medium transition ${bedrooms === b
+                                ? "bg-[#0B1120] text-white"
+                                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                                }`}
+                        >
+                            {b}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div className="mt-5">
+                <label className="text-xs font-medium text-slate-500">
+                    Sort By
+                </label>
+                <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-300"
+                >
+                    {sortOptions.map((s) => (
+                        <option key={s}>{s}</option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="mt-5">
+                <label className="text-xs font-medium text-slate-500">
+                    Rent
+                </label>
+                <div className="mt-2 grid grid-cols-2 gap-3">
+                    <input
+                        type="text"
+                        placeholder="Min"
+                        className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-blue-300"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Max"
+                        className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-blue-300"
+                    />
+                </div>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+                <button
+                    onClick={() => setVerifiedOnly((v) => !v)}
+                    className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${verifiedOnly
+                        ? "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        }`}
+                >
+                    <ShieldCheck className="h-4 w-4" />
+                    P-Knock Verified
+                </button>
+                <button
+                    onClick={() => setAvailableOnly((v) => !v)}
+                    className={`rounded-lg px-3 py-2 text-sm font-medium transition ${availableOnly
+                        ? "bg-blue-50 text-blue-600 ring-1 ring-blue-200"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        }`}
+                >
+                    Available Now
+                </button>
+            </div>
+
+            <button
+                onClick={() => setFilterOpen(false)}
+                className="mt-6 w-full rounded-lg bg-blue-600 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
+            >
+                Apply Filter
+            </button>
+        </>
+    );
+
     return (
         <div className="min-h-screen bg-slate-50">
             {/* Search header */}
             <section className="bg-white pb-12 lg:p-32 pt-20">
                 <div className="mx-auto max-w-3xl px-6 text-center">
-                    <h1 className="text-5xl font-semibold leading-tight text-slate-900 md:text-6xl">
-                        Find your verified
-                        <br />
-                        home today
+                    <h1 className="text-5xl font-bold lg:leading-tight pt-5 text-slate-900 md:text-6xl">
+                        Find Your Verified
+                        <br className="hidden sm:block" /> Home Today
                     </h1>
 
                     <div className="mx-auto mt-8 flex max-w-xl overflow-hidden rounded-full border border-slate-200 bg-white p-1.5 shadow-sm">
@@ -181,8 +337,8 @@ const DashHome = () => {
                                 className="w-full py-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400"
                             />
                         </div>
-                        <button className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700">
-                            Search
+                        <button className="rounded-full bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700">
+                            <FaSearch />
                         </button>
                     </div>
 
@@ -197,7 +353,7 @@ const DashHome = () => {
                         ))}
                     </div>
 
-                    <div className="mt-6 flex items-center justify-center gap-3">
+                    <div className="mt-6 flex lg:flex-row flex-col lg:items-center justify-center gap-3">
                         <div className="flex -space-x-3">
                             {[
                                 "https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&w=100&q=80",
@@ -238,7 +394,7 @@ const DashHome = () => {
                                 <button
                                     key={value}
                                     onClick={() => setActiveType(value)}
-                                    className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${isActive
+                                    className={`flex items-center gap-2 rounded-lg border px-4 py-2 text-xs font-medium transition ${isActive
                                         ? "border-[#0B1120] bg-[#0B1120] text-white"
                                         : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                                         }`}
@@ -250,7 +406,7 @@ const DashHome = () => {
                         })}
                     </div>
 
-                    <div className="relative">
+                    <div className="relative" ref={filterRef}>
                         <button
                             onClick={() => setFilterOpen((v) => !v)}
                             className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:border-slate-300"
@@ -259,135 +415,57 @@ const DashHome = () => {
                             Filter
                         </button>
 
+                        {/* Desktop dropdown */}
                         {filterOpen && (
-                            <div className="absolute right-0 z-20 mt-2 w-[420px] rounded-2xl bg-white p-6 shadow-xl ring-1 ring-slate-100">
+                            <div className="hidden sm:block absolute right-0 z-20 mt-2 w-[420px] rounded-2xl bg-white p-6 shadow-xl ring-1 ring-slate-100">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-base font-semibold text-slate-900">
                                         Filter
                                     </h3>
                                     <button
-                                        onClick={() => {
-                                            setBedrooms("Any");
-                                            setSortBy(sortOptions[0]);
-                                            setVerifiedOnly(false);
-                                            setAvailableOnly(false);
-                                        }}
+                                        onClick={clearFilters}
                                         className="text-sm font-medium text-blue-600 hover:text-blue-700"
                                     >
                                         Clear Filter
                                     </button>
                                 </div>
-
-                                <div className="mt-5 grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-xs font-medium text-slate-500">
-                                            Property Type
-                                        </label>
-                                        <select className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-300">
-                                            <option>All</option>
-                                            {propertyTypes.slice(1).map((t) => (
-                                                <option key={t.value}>{t.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-slate-500">
-                                            City
-                                        </label>
-                                        <select className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-300">
-                                            <option>All Cities</option>
-                                            {cities.map((c) => (
-                                                <option key={c}>{c}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div className="mt-5">
-                                    <label className="text-xs font-medium text-slate-500">
-                                        Bedrooms
-                                    </label>
-                                    <div className="mt-1.5 flex gap-2">
-                                        {bedroomOptions.map((b) => (
-                                            <button
-                                                key={b}
-                                                onClick={() => setBedrooms(b)}
-                                                className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${bedrooms === b
-                                                    ? "bg-[#0B1120] text-white"
-                                                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                                                    }`}
-                                            >
-                                                {b}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="mt-5">
-                                    <label className="text-xs font-medium text-slate-500">
-                                        Sort By
-                                    </label>
-                                    <select
-                                        value={sortBy}
-                                        onChange={(e) => setSortBy(e.target.value)}
-                                        className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-300"
-                                    >
-                                        {sortOptions.map((s) => (
-                                            <option key={s}>{s}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="mt-5">
-                                    <label className="text-xs font-medium text-slate-500">
-                                        Rent
-                                    </label>
-                                    <div className="mt-2 grid grid-cols-2 gap-3">
-                                        <input
-                                            type="text"
-                                            placeholder="Min"
-                                            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-blue-300"
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Max"
-                                            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-blue-300"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="mt-5 flex gap-2">
-                                    <button
-                                        onClick={() => setVerifiedOnly((v) => !v)}
-                                        className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${verifiedOnly
-                                            ? "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200"
-                                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                                            }`}
-                                    >
-                                        <ShieldCheck className="h-4 w-4" />
-                                        P-Knock Verified
-                                    </button>
-                                    <button
-                                        onClick={() => setAvailableOnly((v) => !v)}
-                                        className={`rounded-lg px-3 py-2 text-sm font-medium transition ${availableOnly
-                                            ? "bg-blue-50 text-blue-600 ring-1 ring-blue-200"
-                                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                                            }`}
-                                    >
-                                        Available Now
-                                    </button>
-                                </div>
-
-                                <button
-                                    onClick={() => setFilterOpen(false)}
-                                    className="mt-6 w-full rounded-lg bg-blue-600 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
-                                >
-                                    Apply Filter
-                                </button>
+                                <div className="mt-5">{filterBody}</div>
                             </div>
                         )}
                     </div>
                 </div>
+
+                {/* Mobile bottom sheet */}
+                {filterOpen && (
+                    <div className="sm:hidden fixed inset-0 z-50 flex items-end justify-center">
+                        <div
+                            className="absolute inset-0 bg-black/40"
+                            onClick={() => setFilterOpen(false)}
+                        />
+                        <div
+                            ref={mobileFilterRef}
+                            className="relative w-full max-h-[85vh] overflow-y-auto bg-white rounded-t-2xl shadow-2xl animate-slide-up"
+                        >
+                            <div className="flex justify-center pt-3 pb-1">
+                                <div className="w-10 h-1 rounded-full bg-gray-300" />
+                            </div>
+
+                            <div className="flex items-center justify-between px-5 pt-2 pb-4 border-b border-gray-100">
+                                <h3 className="text-base font-semibold text-slate-900">
+                                    Filter
+                                </h3>
+                                <button
+                                    onClick={clearFilters}
+                                    className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                                >
+                                    Clear Filter
+                                </button>
+                            </div>
+
+                            <div className="px-5 pt-4 pb-8">{filterBody}</div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Active filter chips */}
                 {(bedrooms !== "Any" || verifiedOnly || availableOnly) && (

@@ -15,6 +15,10 @@ import {
     Users,
 } from "lucide-react";
 import { useState } from "react";
+import { FaSearch } from "react-icons/fa";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../providers/AuthProvider";
+import { SolidBtn } from "../components/btns";
 import Navbar from "../components/Navbar";
 import { images } from "../utils/images";
 
@@ -242,6 +246,12 @@ const Home = () => {
     const [openFAQ, setOpenFAQ] = useState(0);
     const t = testimonials[activeTestimonial];
 
+    const { isLoggedIn } = useAuth();
+
+    if (isLoggedIn) {
+        return <Navigate to="/dashboard/home" replace />;
+    }
+
     return (
         <>
             <Navbar />
@@ -256,7 +266,7 @@ const Home = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
 
                 <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-16">
-                    <h1 className="max-w-2xl text-5xl font-semibold leading-tight text-white md:text-6xl">
+                    <h1 className="max-w-2xl text-5xl font-bold lg:leading-tight text-white md:text-6xl">
                         Rent with complete confidence.
                     </h1>
                     <p className="mt-4 max-w-xl text-base text-white/85">
@@ -274,8 +284,8 @@ const Home = () => {
                                 className="w-full py-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400"
                             />
                         </div>
-                        <button className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700">
-                            Search
+                        <button className="rounded-full bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700">
+                            <FaSearch />
                         </button>
                     </div>
 
@@ -290,7 +300,7 @@ const Home = () => {
                         ))}
                     </div>
 
-                    <div className="mt-6 flex items-center gap-3">
+                    <div className="mt-6 flex lg:flex-row flex-col lg:items-center gap-3">
                         <div className="flex -space-x-3">
                             {[
                                 "https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&w=100&q=80",
@@ -575,13 +585,11 @@ const Home = () => {
                             Join 12,000+ Nigerians who rent with confidence on P-Knock.
                             Free to join, no hidden fees.
                         </p>
-                        <div className="relative z-10 mt-8 flex justify-center gap-4">
+                        <div className="relative z-10 mt-8 flex flex-col lg:flex-row justify-center gap-4">
                             <button className="rounded-lg bg-white px-6 py-3 text-sm font-medium text-slate-900 hover:bg-slate-100">
                                 Get Started
                             </button>
-                            <button className="rounded-lg px-6 py-3 text-sm font-medium text-white hover:text-blue-300">
-                                Browse Properties
-                            </button>
+                            <SolidBtn text="Browse Properties" onClick={() => { }} />
                         </div>
                     </div>
                 </div>

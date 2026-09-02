@@ -182,7 +182,7 @@ const DashSingleProperty = () => {
                             <img
                                 src={galleryImages[activeImage]}
                                 alt="Property"
-                                className="h-[420px] w-full object-cover"
+                                className="h-[350px] w-full object-cover"
                             />
                             <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-medium text-emerald-600 shadow-sm">
                                 <ShieldCheck className="h-3.5 w-3.5" />
@@ -259,7 +259,7 @@ const DashSingleProperty = () => {
                                 Lekki Phase 1, Lagos
                             </p>
 
-                            <div className="mt-5 flex items-center gap-6 border-t border-slate-100 pt-5 text-sm text-slate-600">
+                            <div className="mt-5 flex flex-wrap items-center gap-6 border-t border-slate-100 pt-5 text-sm text-slate-600">
                                 <span className="flex items-center gap-1.5">
                                     <Bed className="h-4 w-4 text-slate-400" />
                                     <strong className="text-slate-800">3</strong> bedrooms
@@ -535,11 +535,11 @@ const DashSingleProperty = () => {
                 >
                     <div
                         onClick={(e) => e.stopPropagation()}
-                        className="my-8 w-full max-w-xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8"
+                        className="my-8 w-full max-w-xl rounded-3xl bg-white p-3 shadow-2xl sm:p-4"
                     >
                         {/* Property summary */}
                         <div className="flex gap-4">
-                            <div className="relative h-28 w-32 flex-shrink-0 overflow-hidden rounded-xl">
+                            <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl">
                                 <img
                                     src={galleryImages[0]}
                                     alt="Property"
@@ -547,26 +547,26 @@ const DashSingleProperty = () => {
                                 />
                                 <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-white/95 px-2 py-0.5 text-[10px] font-medium text-emerald-600 shadow-sm">
                                     <ShieldCheck className="h-3 w-3" />
-                                    P-Knock Verified
+                                    Verified
                                 </span>
                             </div>
                             <div className="min-w-0">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <span className="text-sm font-medium text-blue-600">
+                                    <span className="text-xs font-medium text-blue-600">
                                         Apartment
                                     </span>
                                     <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-600">
                                         Available
                                     </span>
                                 </div>
-                                <h3 className="mt-1 truncate text-lg font-semibold text-slate-900">
+                                <h3 className="mt-1 truncate text-base font-semibold text-slate-900">
                                     3-Bedroom Luxury Apartment, Lekki Phase 1
                                 </h3>
-                                <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-500">
+                                <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
                                     <MapPin className="h-3.5 w-3.5" />
                                     Lekki Phase 1, Lagos
                                 </p>
-                                <div className="mt-2 flex items-center gap-4 text-xs text-slate-500">
+                                <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-slate-500">
                                     <span className="flex items-center gap-1">
                                         <Bed className="h-3.5 w-3.5 text-slate-400" />
                                         <strong className="text-slate-700">3</strong> bedrooms
