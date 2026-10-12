@@ -2,7 +2,6 @@ import {
     Bell,
     Check,
     IdCard,
-    LogOut,
     Mail,
     ScanFace,
     Settings as SettingsIcon,
@@ -10,10 +9,10 @@ import {
     Trash2,
     UploadCloud,
     User,
-    X,
+    X
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../providers/AuthProvider";
+// import { useAuth } from "../../../providers/AuthProvider";
 import Modal from "../../components/ui/Modal";
 import Toggle from "../../components/ui/Toggle";
 
@@ -37,7 +36,7 @@ interface PersonalInfo {
 }
 
 const DashProfile = () => {
-    const { user, logout } = useAuth();
+    // const { user, logout } = useAuth();
     const [activeTab, setActiveTab] = useState<TabId>("personal");
     const [isVerified, setIsVerified] = useState(false);
 
@@ -57,11 +56,11 @@ const DashProfile = () => {
                 {/* Sidebar */}
                 <aside className="w-full shrink-0 rounded-xl border border-gray-200 bg-white md:w-72">
                     <div className="flex items-center gap-3 border-b border-gray-100 p-4">
-                        <img src={user?.avatar} alt={user?.name} className="h-12 w-12 rounded-lg object-cover" />
+                        {/* <img src={user?.avatar} alt={user?.name} className="h-12 w-12 rounded-lg object-cover" />
                         <div className="min-w-0 flex-1">
                             <p className="truncate text-base font-semibold text-gray-900">{user?.name}</p>
                             <p className="truncate text-xs text-gray-500">{user?.email}</p>
-                        </div>
+                        </div> */}
                         <span
                             className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${isVerified ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"
                                 }`}
@@ -82,13 +81,13 @@ const DashProfile = () => {
                                 {label}
                             </button>
                         ))}
-                        <button
+                        {/* <button
                             onClick={logout}
                             className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50"
                         >
                             <LogOut className="h-4 w-4" />
                             Sign out
-                        </button>
+                        </button> */}
                     </nav>
                 </aside>
 
@@ -622,7 +621,7 @@ const SettingsPanel = () => {
 };
 
 const DeleteAccountModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
-    const { logout } = useAuth();
+    // const { logout } = useAuth();
 
     return (
         <Modal open={open} onClose={onClose} maxWidth="max-w-md">
@@ -655,12 +654,12 @@ const DeleteAccountModal = ({ open, onClose }: { open: boolean; onClose: () => v
                     >
                         Cancel
                     </button>
-                    <button
+                    {/* <button
                         onClick={logout}
                         className="flex-1 rounded-lg bg-red-700 py-2.5 text-sm font-medium text-white hover:bg-red-800"
                     >
                         Yes, Delete Account
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </Modal>

@@ -16,8 +16,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../../providers/AuthProvider";
 import { SolidBtn } from "../components/btns";
 import Navbar from "../components/Navbar";
 import { images } from "../utils/images";
@@ -246,11 +244,10 @@ const Home = () => {
     const [openFAQ, setOpenFAQ] = useState(0);
     const t = testimonials[activeTestimonial];
 
-    const { isLoggedIn } = useAuth();
 
-    if (isLoggedIn) {
-        return <Navigate to="/dashboard/home" replace />;
-    }
+    // if (isLoggedIn) {
+    //     return <Navigate to="/dashboard/home" replace />;
+    // }
 
     return (
         <>

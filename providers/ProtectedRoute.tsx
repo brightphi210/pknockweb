@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthProvider";
 
 const ProtectedRoute = ({ element }: any) => {
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const isLoggedIn = localStorage.getItem("pknockUserToken") !== null;
 
   useEffect(() => {
     if (!isLoggedIn) {

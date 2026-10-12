@@ -15,7 +15,7 @@ import {
     Target,
     TrendingUp,
 } from "lucide-react";
-import { useAuth } from "../../../providers/AuthProvider";
+// import { useAuth } from "../../../providers/AuthProvider";
 
 // ---------- Data ----------
 
@@ -144,12 +144,12 @@ const payments = [
 // ---------- Page ----------
 
 const DashOverview = () => {
-    const { user } = useAuth();
+    // const { user } = useAuth();
 
     return (
         <div className="min-h-screen bg-slate-50">
             <div className="mx-auto max-w-7xl px-6 pb-16 pt-28">
-                <div className="flex items-center gap-4">
+                {/* <div className="flex items-center gap-4">
                     <img
                         src={user?.avatar}
                         alt={user?.name}
@@ -161,7 +161,7 @@ const DashOverview = () => {
                             {user?.name ?? "there"}
                         </h1>
                     </div>
-                </div>
+                </div> */}
 
                 <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]">
                     {/* ---------- Left column ---------- */}

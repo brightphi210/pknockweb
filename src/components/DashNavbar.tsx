@@ -2,16 +2,13 @@ import {
     Bell,
     Bookmark,
     CalendarCheck,
-    ChevronDown,
     LayoutDashboard,
-    LogOut,
     ShieldCheck,
     UserCircle2,
     Video
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../providers/AuthProvider";
 import { images } from "../utils/images";
 
 const profileLinks = [
@@ -73,7 +70,6 @@ const notifications: NotificationItem[] = [
 ];
 
 const DashNavbar = () => {
-    const { isLoggedIn, user, logout } = useAuth();
 
     // Profile dropdown
     const [profileOpen, setProfileOpen] = useState(false);
@@ -113,7 +109,7 @@ const DashNavbar = () => {
     }, []);
 
     const handleLogout = () => {
-        logout();
+        // logout();
         setProfileOpen(false);
     };
 
@@ -124,7 +120,7 @@ const DashNavbar = () => {
                 <img src={images.logo} alt="Logo" className="w-full h-auto object-contain" />
             </Link>
 
-            {isLoggedIn && (
+            {/* {isLoggedIn && (
                 <div className="flex items-center gap-3">
                     <div className="relative" ref={notifRef}>
                         <button
@@ -240,7 +236,7 @@ const DashNavbar = () => {
                         )}
                     </div>
                 </div>
-            )}
+            )} */}
         </div>
     );
 };

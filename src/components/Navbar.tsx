@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../providers/AuthProvider";
+// import { useAuth } from "../../providers/AuthProvider";
 import { images } from "../utils/images";
 import { SolidBtn } from "./btns"; // adjust path if needed
 
 
 const Navbar = () => {
-    const { isLoggedIn, login } = useAuth();
+    // const { isLoggedIn, login } = useAuth();
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const dialogRef = useRef<HTMLDivElement>(null);
@@ -67,7 +67,7 @@ const Navbar = () => {
 
     const navigate = useNavigate()
     const handleLogin = () => {
-        login();
+        // login();
         setDialogOpen(false);
         navigate('/dashboard/home')
     };
@@ -95,7 +95,9 @@ const Navbar = () => {
                             </div>
 
                             <div className="p-3 flex flex-col gap-2 mb-2">
-                                <SolidBtn text="Continue as User" onClick={handleLogin} />
+                                <Link to={'/register'} className="w-full">
+                                    <SolidBtn text="Continue as User" />
+                                </Link>
 
                                 <button
                                     onClick={handleLogin}
@@ -110,7 +112,7 @@ const Navbar = () => {
             </div>
 
             {/* ── Mobile full-screen / bottom-sheet style dialog (logged-out only) ── */}
-            {!isLoggedIn && dialogOpen && (
+            {dialogOpen && (
                 <div className="sm:hidden fixed inset-0 z-50 flex items-end justify-center">
                     <div
                         className="absolute inset-0 bg-black/40"
